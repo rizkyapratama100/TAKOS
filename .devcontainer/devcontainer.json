@@ -1,0 +1,45 @@
+{
+    "name": "TAKOS ROS 2 Jazzy",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "privileged": true,
+    "remoteUser": "root",
+    "runArgs": [
+        "--net=host",  // Allows communication with other robots/teams
+        "--ipc=host",  // Improves Gazebo performance
+        // "--gpus=all",  // Passes NVIDIA GPU (ignored on Mac, works on Win/Linux)
+        "-e", "DISPLAY=${env:DISPLAY}" // Passes GUI display
+    ],
+    // Automatically install Git and GitHub CLI
+    "features": {
+        "ghcr.io/devcontainers/features/git:1": {},
+        "ghcr.io/devcontainers/features/github-cli:1": {}
+    },
+    "postCreateCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                // Core ROS & Languages
+                "ms-iot.vscode-ros",
+                "ms-vscode.cpptools",
+                "ms-python.python",
+                "ms-vscode.cmake-tools",
+                
+                // Robotics & XML
+                "redhat.vscode-xml",
+                "smilerobotics.urdf",
+                
+                // Team Productivity
+                "eamodio.gitlens",
+                "gruntfuggly.todo-tree",
+                "streetsidesoftware.code-spell-checker",
+                "yzhang.markdown-all-in-one" // For reading README.md files nicely
+            ]
+        }
+    },
+    // CRITICAL: Set ID to 42 to avoid conflict with the 'Humble' team
+    "containerEnv": {
+        "ROS_DOMAIN_ID": "42"
+    }
+}

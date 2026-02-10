@@ -1,0 +1,144 @@
+<?xml version="1.0" ?>
+<sdf version="1.7">
+  <world name="default">
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <model name="tentacle_robot">
+      <!-- seg_1: Base (largest) -->
+      <include>
+        <uri>model://segment</uri>
+        <name>seg_1</name>
+        <pose>0 0 1.5 0 1.57 0</pose>
+        <scale>0.4026 0.4026 0.4026</scale>
+      </include>
+
+      <!-- seg_2: 1.5 + 2.013 = 3.513 -->
+      <include>
+        <uri>model://segment</uri>
+        <name>seg_2</name>
+        <pose>0 0 3.513 0 1.57 0</pose>
+        <scale>0.366 0.366 0.366</scale>
+      </include>
+
+      <!-- seg_3: 3.513 + 1.83 = 5.343 -->
+      <include>
+        <uri>model://segment</uri>
+        <name>seg_3</name>
+        <pose>0 0 5.343 0 1.57 0</pose>
+        <scale>0.33275 0.33275 0.33275</scale>
+      </include>
+
+      <!-- seg_4: 5.343 + 1.664 = 7.007 -->
+      <include>
+        <uri>model://segment</uri>
+        <name>seg_4</name>
+        <pose>0 0 7.007 0 1.57 0</pose>
+        <scale>0.3025 0.3025 0.3025</scale>
+      </include>
+
+      <!-- seg_5: 7.007 + 1.513 = 8.52 -->
+      <include>
+        <uri>model://segment</uri>
+        <name>seg_5</name>
+        <pose>0 0 8.52 0 1.57 0</pose>
+        <scale>0.275 0.275 0.275</scale>
+      </include>
+
+      <!-- seg_6: 8.52 + 1.375 = 9.895 (Tip) -->
+      <include>
+        <uri>model://segment</uri>
+        <name>seg_6</name>
+        <pose>0 0 9.895 0 1.57 0</pose>
+        <scale>0.25 0.25 0.25</scale>
+      </include>
+
+      <!-- Joints -->
+      <joint name="world_fixed" type="fixed">
+        <parent>world</parent>
+        <child>seg_1::link</child>
+      </joint>
+
+      <joint name="joint_1_2" type="revolute">
+        <parent>seg_1::link</parent>
+        <child>seg_2::link</child>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>-0.78</lower>
+            <upper>0.78</upper>
+          </limit>
+          <dynamics>
+             <spring_stiffness>10.0</spring_stiffness> 
+             <damping>1.0</damping>
+          </dynamics>
+        </axis>
+      </joint>
+
+      <joint name="joint_2_3" type="revolute">
+        <parent>seg_2::link</parent>
+        <child>seg_3::link</child>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>-0.78</lower>
+            <upper>0.78</upper>
+          </limit>
+          <dynamics>
+             <spring_stiffness>10.0</spring_stiffness> 
+             <damping>1.0</damping>
+          </dynamics>
+        </axis>
+      </joint>
+
+      <joint name="joint_3_4" type="revolute">
+        <parent>seg_3::link</parent>
+        <child>seg_4::link</child>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>-0.78</lower>
+            <upper>0.78</upper>
+          </limit>
+          <dynamics>
+             <spring_stiffness>10.0</spring_stiffness> 
+             <damping>1.0</damping>
+          </dynamics>
+        </axis>
+      </joint>
+
+      <joint name="joint_4_5" type="revolute">
+        <parent>seg_4::link</parent>
+        <child>seg_5::link</child>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>-0.78</lower>
+            <upper>0.78</upper>
+          </limit>
+          <dynamics>
+             <spring_stiffness>10.0</spring_stiffness> 
+             <damping>1.0</damping>
+          </dynamics>
+        </axis>
+      </joint>
+
+      <joint name="joint_5_6" type="revolute">
+        <parent>seg_5::link</parent>
+        <child>seg_6::link</child>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>-0.78</lower>
+            <upper>0.78</upper>
+          </limit>
+          <dynamics>
+             <spring_stiffness>10.0</spring_stiffness> 
+             <damping>1.0</damping>
+          </dynamics>
+        </axis>
+      </joint>
+    </model>
+  </world>
+</sdf>

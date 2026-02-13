@@ -6,139 +6,375 @@
     </include>
 
     <model name="tentacle_robot">
-      <!-- seg_1: Base (largest) -->
-      <include>
-        <uri>model://segment</uri>
-        <name>seg_1</name>
-        <pose>0 0 1.5 0 1.57 0</pose>
-        <scale>0.4026 0.4026 0.4026</scale>
-      </include>
+      <link name="seg_1_link">
+        <pose>0 0 1.5000 0 0 0</pose>
+        <inertial>
+          <mass>0.0653</mass>
+          <inertia>
+            <ixx>0.0653</ixx> <ixy>0</ixy> <ixz>0</ixz>
+            <iyy>0.0653</iyy> <iyz>0</iyz>
+            <izz>0.0653</izz>
+          </inertia>
+        </inertial>
+        <visual name="seg_1_visual">
+          <pose>0 0 0 0 1.57 0</pose>
+          <geometry>
+            <mesh>
+              <uri>model://segment/meshes/segment.stl</uri>
+              <scale>0.4026 0.4026 0.4026</scale>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Orange</name>
+            </script>
+          </material>
+        </visual>
+        <collision name="seg_1_collision">
+          <pose>0 0 0 0 1.57 0</pose>
+          <geometry>
+            <mesh>
+              <uri>model://segment/meshes/segment.stl</uri>
+              <scale>0.3624 0.3624 0.3624</scale>
+            </mesh>
+          </geometry>
+        </collision>
+      </link>
 
-      <!-- seg_2: 1.5 + 2.013 = 3.513 -->
-      <include>
-        <uri>model://segment</uri>
-        <name>seg_2</name>
-        <pose>0 0 3.513 0 1.57 0</pose>
-        <scale>0.366 0.366 0.366</scale>
-      </include>
+      <link name="seg_2_link">
+        <pose>0 0 3.3255 0 0 0</pose>
+        <inertial>
+          <mass>0.0490</mass>
+          <inertia>
+            <ixx>0.0490</ixx> <ixy>0</ixy> <ixz>0</ixz>
+            <iyy>0.0490</iyy> <iyz>0</iyz>
+            <izz>0.0490</izz>
+          </inertia>
+        </inertial>
+        <visual name="seg_2_visual">
+          <pose>0 0 0 0 1.57 0</pose>
+          <geometry>
+            <mesh>
+              <uri>model://segment/meshes/segment.stl</uri>
+              <scale>0.3660 0.3660 0.3660</scale>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/DarkGrey</name>
+            </script>
+          </material>
+        </visual>
+        <collision name="seg_2_collision">
+          <pose>0 0 0 0 1.57 0</pose>
+          <geometry>
+            <mesh>
+              <uri>model://segment/meshes/segment.stl</uri>
+              <scale>0.3294 0.3294 0.3294</scale>
+            </mesh>
+          </geometry>
+        </collision>
+      </link>
 
-      <!-- seg_3: 3.513 + 1.83 = 5.343 -->
-      <include>
-        <uri>model://segment</uri>
-        <name>seg_3</name>
-        <pose>0 0 5.343 0 1.57 0</pose>
-        <scale>0.33275 0.33275 0.33275</scale>
-      </include>
+      <link name="seg_3_link">
+        <pose>0 0 4.9851 0 0 0</pose>
+        <inertial>
+          <mass>0.0368</mass>
+          <inertia>
+            <ixx>0.0368</ixx> <ixy>0</ixy> <ixz>0</ixz>
+            <iyy>0.0368</iyy> <iyz>0</iyz>
+            <izz>0.0368</izz>
+          </inertia>
+        </inertial>
+        <visual name="seg_3_visual">
+          <pose>0 0 0 0 1.57 0</pose>
+          <geometry>
+            <mesh>
+              <uri>model://segment/meshes/segment.stl</uri>
+              <scale>0.3328 0.3328 0.3328</scale>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Orange</name>
+            </script>
+          </material>
+        </visual>
+        <collision name="seg_3_collision">
+          <pose>0 0 0 0 1.57 0</pose>
+          <geometry>
+            <mesh>
+              <uri>model://segment/meshes/segment.stl</uri>
+              <scale>0.2995 0.2995 0.2995</scale>
+            </mesh>
+          </geometry>
+        </collision>
+      </link>
 
-      <!-- seg_4: 5.343 + 1.664 = 7.007 -->
-      <include>
-        <uri>model://segment</uri>
-        <name>seg_4</name>
-        <pose>0 0 7.007 0 1.57 0</pose>
-        <scale>0.3025 0.3025 0.3025</scale>
-      </include>
+      <link name="seg_4_link">
+        <pose>0 0 6.4939 0 0 0</pose>
+        <inertial>
+          <mass>0.0277</mass>
+          <inertia>
+            <ixx>0.0277</ixx> <ixy>0</ixy> <ixz>0</ixz>
+            <iyy>0.0277</iyy> <iyz>0</iyz>
+            <izz>0.0277</izz>
+          </inertia>
+        </inertial>
+        <visual name="seg_4_visual">
+          <pose>0 0 0 0 1.57 0</pose>
+          <geometry>
+            <mesh>
+              <uri>model://segment/meshes/segment.stl</uri>
+              <scale>0.3025 0.3025 0.3025</scale>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/DarkGrey</name>
+            </script>
+          </material>
+        </visual>
+        <collision name="seg_4_collision">
+          <pose>0 0 0 0 1.57 0</pose>
+          <geometry>
+            <mesh>
+              <uri>model://segment/meshes/segment.stl</uri>
+              <scale>0.2723 0.2723 0.2723</scale>
+            </mesh>
+          </geometry>
+        </collision>
+      </link>
 
-      <!-- seg_5: 7.007 + 1.513 = 8.52 -->
-      <include>
-        <uri>model://segment</uri>
-        <name>seg_5</name>
-        <pose>0 0 8.52 0 1.57 0</pose>
-        <scale>0.275 0.275 0.275</scale>
-      </include>
+      <link name="seg_5_link">
+        <pose>0 0 7.8654 0 0 0</pose>
+        <inertial>
+          <mass>0.0208</mass>
+          <inertia>
+            <ixx>0.0208</ixx> <ixy>0</ixy> <ixz>0</ixz>
+            <iyy>0.0208</iyy> <iyz>0</iyz>
+            <izz>0.0208</izz>
+          </inertia>
+        </inertial>
+        <visual name="seg_5_visual">
+          <pose>0 0 0 0 1.57 0</pose>
+          <geometry>
+            <mesh>
+              <uri>model://segment/meshes/segment.stl</uri>
+              <scale>0.2750 0.2750 0.2750</scale>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Orange</name>
+            </script>
+          </material>
+        </visual>
+        <collision name="seg_5_collision">
+          <pose>0 0 0 0 1.57 0</pose>
+          <geometry>
+            <mesh>
+              <uri>model://segment/meshes/segment.stl</uri>
+              <scale>0.2475 0.2475 0.2475</scale>
+            </mesh>
+          </geometry>
+        </collision>
+      </link>
 
-      <!-- seg_6: 8.52 + 1.375 = 9.895 (Tip) -->
-      <include>
-        <uri>model://segment</uri>
-        <name>seg_6</name>
-        <pose>0 0 9.895 0 1.57 0</pose>
-        <scale>0.25 0.25 0.25</scale>
-      </include>
+      <link name="seg_6_link">
+        <pose>0 0 9.1123 0 0 0</pose>
+        <inertial>
+          <mass>0.0156</mass>
+          <inertia>
+            <ixx>0.0156</ixx> <ixy>0</ixy> <ixz>0</ixz>
+            <iyy>0.0156</iyy> <iyz>0</iyz>
+            <izz>0.0156</izz>
+          </inertia>
+        </inertial>
+        <visual name="seg_6_visual">
+          <pose>0 0 0 0 1.57 0</pose>
+          <geometry>
+            <mesh>
+              <uri>model://segment/meshes/segment.stl</uri>
+              <scale>0.2500 0.2500 0.2500</scale>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/DarkGrey</name>
+            </script>
+          </material>
+        </visual>
+        <collision name="seg_6_collision">
+          <pose>0 0 0 0 1.57 0</pose>
+          <geometry>
+            <mesh>
+              <uri>model://segment/meshes/segment.stl</uri>
+              <scale>0.2250 0.2250 0.2250</scale>
+            </mesh>
+          </geometry>
+        </collision>
+      </link>
 
-      <!-- Joints -->
       <joint name="world_fixed" type="fixed">
         <parent>world</parent>
-        <child>seg_1::link</child>
+        <child>seg_1_link</child>
       </joint>
+
+      <joint name="joint_0_1" type="revolute">
+        <parent>seg_1_link</parent>
+        <child>seg_2_link</child>
+        <pose>0 0 -0.9151 0 0 0</pose>
+        <axis>
+          <xyz>1 0 0</xyz>
+          <limit>
+            <lower>-0.52</lower>
+            <upper>0.52</upper>
+          </limit>
+          <dynamics>
+             <spring_stiffness>50.0</spring_stiffness>
+             <damping>5.0</damping>
+          </dynamics>
+        </axis>
+      </joint>
+
+      <plugin filename="gz-sim-joint-position-controller-system"
+              name="gz::sim::systems::JointPositionController">
+        <joint_name>joint_0_1</joint_name>
+        <p_gain>100</p_gain>
+        <i_gain>0.1</i_gain>
+        <d_gain>1.0</d_gain>
+        <i_max>1</i_max>
+        <i_min>-1</i_min>
+        <cmd_max>1000</cmd_max>
+        <cmd_min>-1000</cmd_min>
+      </plugin>
 
       <joint name="joint_1_2" type="revolute">
-        <parent>seg_1::link</parent>
-        <child>seg_2::link</child>
+        <parent>seg_2_link</parent>
+        <child>seg_3_link</child>
+        <pose>0 0 -0.8319 0 0 0</pose>
         <axis>
-          <xyz>0 1 0</xyz>
+          <xyz>1 0 0</xyz>
           <limit>
-            <lower>-0.78</lower>
-            <upper>0.78</upper>
+            <lower>-0.52</lower>
+            <upper>0.52</upper>
           </limit>
           <dynamics>
-             <spring_stiffness>10.0</spring_stiffness> 
-             <damping>1.0</damping>
+             <spring_stiffness>50.0</spring_stiffness>
+             <damping>5.0</damping>
           </dynamics>
         </axis>
       </joint>
+
+      <plugin filename="gz-sim-joint-position-controller-system"
+              name="gz::sim::systems::JointPositionController">
+        <joint_name>joint_1_2</joint_name>
+        <p_gain>100</p_gain>
+        <i_gain>0.1</i_gain>
+        <d_gain>1.0</d_gain>
+        <i_max>1</i_max>
+        <i_min>-1</i_min>
+        <cmd_max>1000</cmd_max>
+        <cmd_min>-1000</cmd_min>
+      </plugin>
 
       <joint name="joint_2_3" type="revolute">
-        <parent>seg_2::link</parent>
-        <child>seg_3::link</child>
+        <parent>seg_3_link</parent>
+        <child>seg_4_link</child>
+        <pose>0 0 -0.7563 0 0 0</pose>
         <axis>
-          <xyz>0 1 0</xyz>
+          <xyz>1 0 0</xyz>
           <limit>
-            <lower>-0.78</lower>
-            <upper>0.78</upper>
+            <lower>-0.52</lower>
+            <upper>0.52</upper>
           </limit>
           <dynamics>
-             <spring_stiffness>10.0</spring_stiffness> 
-             <damping>1.0</damping>
+             <spring_stiffness>50.0</spring_stiffness>
+             <damping>5.0</damping>
           </dynamics>
         </axis>
       </joint>
+
+      <plugin filename="gz-sim-joint-position-controller-system"
+              name="gz::sim::systems::JointPositionController">
+        <joint_name>joint_2_3</joint_name>
+        <p_gain>100</p_gain>
+        <i_gain>0.1</i_gain>
+        <d_gain>1.0</d_gain>
+        <i_max>1</i_max>
+        <i_min>-1</i_min>
+        <cmd_max>1000</cmd_max>
+        <cmd_min>-1000</cmd_min>
+      </plugin>
 
       <joint name="joint_3_4" type="revolute">
-        <parent>seg_3::link</parent>
-        <child>seg_4::link</child>
+        <parent>seg_4_link</parent>
+        <child>seg_5_link</child>
+        <pose>0 0 -0.6875 0 0 0</pose>
         <axis>
-          <xyz>0 1 0</xyz>
+          <xyz>1 0 0</xyz>
           <limit>
-            <lower>-0.78</lower>
-            <upper>0.78</upper>
+            <lower>-0.52</lower>
+            <upper>0.52</upper>
           </limit>
           <dynamics>
-             <spring_stiffness>10.0</spring_stiffness> 
-             <damping>1.0</damping>
+             <spring_stiffness>50.0</spring_stiffness>
+             <damping>5.0</damping>
           </dynamics>
         </axis>
       </joint>
+
+      <plugin filename="gz-sim-joint-position-controller-system"
+              name="gz::sim::systems::JointPositionController">
+        <joint_name>joint_3_4</joint_name>
+        <p_gain>100</p_gain>
+        <i_gain>0.1</i_gain>
+        <d_gain>1.0</d_gain>
+        <i_max>1</i_max>
+        <i_min>-1</i_min>
+        <cmd_max>1000</cmd_max>
+        <cmd_min>-1000</cmd_min>
+      </plugin>
 
       <joint name="joint_4_5" type="revolute">
-        <parent>seg_4::link</parent>
-        <child>seg_5::link</child>
+        <parent>seg_5_link</parent>
+        <child>seg_6_link</child>
+        <pose>0 0 -0.6250 0 0 0</pose>
         <axis>
-          <xyz>0 1 0</xyz>
+          <xyz>1 0 0</xyz>
           <limit>
-            <lower>-0.78</lower>
-            <upper>0.78</upper>
+            <lower>-0.52</lower>
+            <upper>0.52</upper>
           </limit>
           <dynamics>
-             <spring_stiffness>10.0</spring_stiffness> 
-             <damping>1.0</damping>
+             <spring_stiffness>50.0</spring_stiffness>
+             <damping>5.0</damping>
           </dynamics>
         </axis>
       </joint>
 
-      <joint name="joint_5_6" type="revolute">
-        <parent>seg_5::link</parent>
-        <child>seg_6::link</child>
-        <axis>
-          <xyz>0 1 0</xyz>
-          <limit>
-            <lower>-0.78</lower>
-            <upper>0.78</upper>
-          </limit>
-          <dynamics>
-             <spring_stiffness>10.0</spring_stiffness> 
-             <damping>1.0</damping>
-          </dynamics>
-        </axis>
-      </joint>
+      <plugin filename="gz-sim-joint-position-controller-system"
+              name="gz::sim::systems::JointPositionController">
+        <joint_name>joint_4_5</joint_name>
+        <p_gain>100</p_gain>
+        <i_gain>0.1</i_gain>
+        <d_gain>1.0</d_gain>
+        <i_max>1</i_max>
+        <i_min>-1</i_min>
+        <cmd_max>1000</cmd_max>
+        <cmd_min>-1000</cmd_min>
+      </plugin>
+
+      <plugin filename="gz-sim-joint-state-publisher-system"
+              name="gz::sim::systems::JointStatePublisher">
+      </plugin>
     </model>
   </world>
 </sdf>

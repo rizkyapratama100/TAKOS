@@ -11,6 +11,10 @@ else
     echo "Warning: install/setup.bash not found. Building first..."
 fi
 
+
+echo "Generating Tentacle SDF..."
+python3 src/takos_bringup/scripts/generate_tentacle.py
+
 echo "Building Package..."
 colcon build --symlink-install
 

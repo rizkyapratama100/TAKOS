@@ -2,26 +2,22 @@ import math
 
 def generate_sdf():
     # Constants
-    NUM_SEGMENTS = 6
+    NUM_SEGMENTS = 10
     TIP_SCALE = 0.25
     SCALE_RATIO = 1.1  # Each segment is 1.1x larger than the one above it
-    UNIT_HEIGHT = 5.0  # Height for scale=1.0 derived from 0.25 -> 1.25
-    UNIT_MASS = 1.0    # Mass for scale=1.0 (approx)
-    UNIT_Inertia = 0.1 # Approximate inertia for scale=1.0
+    UNIT_HEIGHT = 5.0  # Height for scale=1.0
+    UNIT_MASS = 1.0    # Mass for scale=1.0
     
     # Calculate scales from Tip (smallest) to Base (largest)
-    # Tip is index 0 in this list for calculation
     scales = []
     current_scale = TIP_SCALE
     for _ in range(NUM_SEGMENTS):
         scales.append(current_scale)
         current_scale *= SCALE_RATIO
     
-    # Reverse so index 0 is Base (largest)
-    scales.reverse()
+    scales.reverse() # Base to Tip
     
     # Calculate positions
-    # Base starts at Z=1.5
     positions = []
     heights = []
     
@@ -31,18 +27,13 @@ def generate_sdf():
         height = scale * UNIT_HEIGHT
         heights.append(height)
         
-        # Position is center of segment
-        # If not first, spacing is (prev_height + current_height) / 2
-        # But wait, we need cumulative Z.
-        # First segment center is at Z=1.5
-        # Second segment center is Z_prev + (H_prev + H_curr) / 2
         if i == 0:
             positions.append(1.5)
         else:
-            prev_z = positions[i-1]
-            prev_h = heights[i-1]
+            prev_z = positions[i - 1]
+            prev_h = heights[i - 1]
             curr_h = height
-            d = ((prev_h + curr_h) / 2.0) * 0.95 # overlap slightly
+            d = ((prev_h + curr_h) / 2.0) * 0.95  # slight overlap
             positions.append(prev_z + d)
             
     # Generate XML
@@ -62,11 +53,7 @@ def generate_sdf():
         name = scale_names[i]
         scale = scales[i]
         pos_z = positions[i]
-        height = heights[i]
         
-        # Inertia scaling
-        # Increased base inertia to prevent instability with small segments
-        # Using a higher base value (1.0 instead of 0.1) for stability
         mass = UNIT_MASS * (scale ** 3)
         inertia = 1.0 * (scale ** 3) 
         
@@ -81,6 +68,7 @@ def generate_sdf():
         xml.append('          </inertia>')
         xml.append('        </inertial>')
         
+        color = 'Gazebo/Orange' if i % 2 == 0 else 'Gazebo/DarkGrey'
         xml.append(f'        <visual name="{name}_visual">')
         xml.append('          <pose>0 0 0 0 1.57 0</pose>')
         xml.append('          <geometry>')
@@ -92,14 +80,12 @@ def generate_sdf():
         xml.append('          <material>')
         xml.append('            <script>')
         xml.append('              <uri>file://media/materials/scripts/gazebo.material</uri>')
-        color = 'Gazebo/Orange' if i % 2 == 0 else 'Gazebo/DarkGrey'
         xml.append(f'              <name>{color}</name>')
         xml.append('            </script>')
         xml.append('          </material>')
         xml.append('        </visual>')
         
         # Collision scaled down slightly (0.9) to prevent coplanar interpenetration at joints
-        # This is a common trick to fix ODE crashes
         c_scale = scale * 0.9 
         xml.append(f'        <collision name="{name}_collision">')
         xml.append('          <pose>0 0 0 0 1.57 0</pose>')
@@ -113,8 +99,6 @@ def generate_sdf():
         xml.append('      </link>')
         xml.append('')
         
-    # Joints
-    # Base is fixed to world
     xml.append('      <joint name="world_fixed" type="fixed">')
     xml.append('        <parent>world</parent>')
     xml.append(f'        <child>{scale_names[0]}_link</child>')
@@ -124,44 +108,88 @@ def generate_sdf():
     for i in range(NUM_SEGMENTS - 1):
         parent = scale_names[i]
         child = scale_names[i+1]
+        inter = f"{child}_inter"
         
-        # Anchor is at bottom of child relative to child center
-        # Child height is heights[i+1]
-        anchor_z = -heights[i+1] / 2.0
+        # Current logic:
+        # P_parent + H_parent/2 = Top of Parent
+        # Lower pivot by 25% of height to hide gaps
         
-        xml.append(f'      <joint name="joint_{i}_{i+1}" type="revolute">')
+        parent_top_z = positions[i] + heights[i] / 2.0
+        pivot_offset = heights[i] * 0.25
+        pivot_z = parent_top_z - pivot_offset
+        
+        # Intermediate link at the pivot point
+        xml.append(f'      <link name="{inter}">')
+        xml.append(f'        <pose>0 0 {pivot_z:.4f} 0 0 0</pose>')
+        xml.append('        <inertial>')
+        xml.append('          <mass>0.001</mass>')
+        xml.append('          <inertia>')
+        xml.append('            <ixx>0.0001</ixx> <ixy>0</ixy> <ixz>0</ixz>')
+        xml.append('            <iyy>0.0001</iyy> <iyz>0</iyz>')
+        xml.append('            <izz>0.0001</izz>')
+        xml.append('          </inertia>')
+        xml.append('        </inertial>')
+        xml.append('      </link>')
+        xml.append('')
+
+        # 1. Bend Joint (Revolute): Parent -> Intermediate
+        xml.append(f'      <joint name="joint_{i}_{i+1}_bend" type="revolute">')
         xml.append(f'        <parent>{parent}_link</parent>')
-        xml.append(f'        <child>{child}_link</child>')
-        xml.append(f'        <pose>0 0 {anchor_z:.4f} 0 0 0</pose>')
+        xml.append(f'        <child>{inter}</child>')
+        xml.append('        <pose>0 0 0 0 0 0</pose>')
         xml.append('        <axis>')
-        xml.append('          <xyz>1 0 0</xyz>') # X-axis rotation (roll/side-bend)
+        xml.append('          <xyz>1 0 0</xyz>') # X-axis rotation
         xml.append('          <limit>')
         xml.append('            <lower>-0.52</lower>')
         xml.append('            <upper>0.52</upper>')
         xml.append('          </limit>')
         xml.append('          <dynamics>')
         xml.append('             <spring_stiffness>50.0</spring_stiffness>')
+        xml.append('             <spring_reference>0</spring_reference>')
         xml.append('             <damping>5.0</damping>')
         xml.append('          </dynamics>')
         xml.append('        </axis>')
         xml.append('      </joint>')
         xml.append('')
-        
-        # Add JointPositionController plugin for this joint to enable GUI interaction
-        xml.append('      <plugin filename="gz-sim-joint-position-controller-system"')
-        xml.append('              name="gz::sim::systems::JointPositionController">')
-        xml.append(f'        <joint_name>joint_{i}_{i+1}</joint_name>')
-        xml.append('        <p_gain>100</p_gain>')
-        xml.append('        <i_gain>0.1</i_gain>')
-        xml.append('        <d_gain>1.0</d_gain>')
-        xml.append('        <i_max>1</i_max>')
-        xml.append('        <i_min>-1</i_min>')
-        xml.append('        <cmd_max>1000</cmd_max>')
-        xml.append('        <cmd_min>-1000</cmd_min>')
-        xml.append('      </plugin>')
-        xml.append('')
 
-    # Add JointStatePublisher to broadcast joint states
+        # 2. Compress Joint (Prismatic): Intermediate -> Child
+        # Child center is positions[i+1]
+        # Pivot in Child frame (Offset from center): (Pivot_Z - Child_center)
+        compress_pose_z = pivot_z - positions[i+1]
+        
+        xml.append(f'      <joint name="joint_{i}_{i+1}_compress" type="prismatic">')
+        xml.append(f'        <parent>{inter}</parent>')
+        xml.append(f'        <child>{child}_link</child>')
+        xml.append(f'        <pose>0 0 {compress_pose_z:.4f} 0 0 0</pose>')
+        xml.append('        <axis>')
+        xml.append('          <xyz>0 0 1</xyz>') # Z-axis (local)
+        xml.append('          <limit>')
+        xml.append('            <lower>-1.0</lower>') # Can squish
+        xml.append('            <upper>0.1</upper>') # Slightly loose
+        xml.append('          </limit>')
+        xml.append('          <dynamics>')
+        xml.append('             <spring_stiffness>500.0</spring_stiffness>')
+        xml.append('             <spring_reference>0</spring_reference>')
+        xml.append('             <damping>50.0</damping>')
+        xml.append('          </dynamics>')
+        xml.append('        </axis>')
+        xml.append('      </joint>')
+        xml.append('')
+        
+        # Add Controllers for both
+        for suffix in ["bend", "compress"]:
+            xml.append('      <plugin filename="gz-sim-joint-position-controller-system"')
+            xml.append('              name="gz::sim::systems::JointPositionController">')
+            xml.append(f'        <joint_name>joint_{i}_{i+1}_{suffix}</joint_name>')
+            xml.append('        <p_gain>100</p_gain>')
+            xml.append('        <i_gain>0.1</i_gain>')
+            xml.append('        <d_gain>1.0</d_gain>')
+            xml.append('        <cmd_max>1000</cmd_max>')
+            xml.append('        <cmd_min>-1000</cmd_min>')
+            xml.append('      </plugin>')
+            xml.append('')
+
+    # Add JointStatePublisher
     xml.append('      <plugin filename="gz-sim-joint-state-publisher-system"')
     xml.append('              name="gz::sim::systems::JointStatePublisher">')
     xml.append('      </plugin>')
@@ -175,9 +203,6 @@ def generate_sdf():
 if __name__ == "__main__":
     content = generate_sdf()
     
-    # Determine path relative to this script
-    # Script is in src/takos_bringup/scripts/
-    # Output should be in src/takos_bringup/resource/
     import os
     script_dir = os.path.dirname(os.path.abspath(__file__))
     resource_dir = os.path.join(script_dir, '..', 'resource')

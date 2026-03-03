@@ -3,3 +3,4 @@ install/
 log/
 .vscode/
 # Note: Do NOT ignore .devcontainer/ because your team needs it!
+mujoco/.venv/

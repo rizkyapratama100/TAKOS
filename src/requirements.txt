@@ -1,0 +1,9 @@
+geometry_msgs==4.9.1
+gymnasium==1.2.3
+mujoco==3.5.0
+nav_msgs==4.9.1
+numpy==1.21.5
+rclpy==3.3.21
+stable_baselines3==2.7.1
+std_msgs==4.9.1
+visualization_msgs==4.9.1

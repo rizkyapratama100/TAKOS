@@ -7,3 +7,5 @@ rclpy==3.3.21
 stable_baselines3==2.7.1
 std_msgs==4.9.1
 visualization_msgs==4.9.1
+pyyaml==6.0.3
+osrf_pycommon==2.0.2

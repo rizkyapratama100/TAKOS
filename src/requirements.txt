@@ -1,11 +1,7 @@
-geometry_msgs==4.9.1
+ros-jazzy-geometry-msgs==5.3.6
 gymnasium==1.2.3
 mujoco==3.5.0
-nav_msgs==4.9.1
-numpy==1.21.5
-rclpy==3.3.21
 stable_baselines3==2.7.1
-std_msgs==4.9.1
-visualization_msgs==4.9.1
 pyyaml==6.0.3
 osrf_pycommon==2.0.2
+# Make sure you install ROS 2 using https://docs.ros.org/en/rolling/Installation/Ubuntu-Install-Debs.html and set up environment first

@@ -143,7 +143,7 @@ def main():
     # 2. Load the MuJoCo model
     import os
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    xml_path = os.path.join(script_dir, "tentacle.xml")
+    xml_path = os.path.join(script_dir, "tentacle_locked.xml")
     model = mujoco.MjModel.from_xml_path(xml_path)
     data = mujoco.MjData(model)
 

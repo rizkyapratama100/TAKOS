@@ -1,3 +1,4 @@
+
 <mujoco model="spiral_robot">
   <compiler angle="radian" meshdir="."/>
   <option gravity="0 0 0" timestep="0.001" solver="Newton"/>
@@ -331,7 +332,7 @@
     </spatial>
   </tendon>
     <actuator>
-    <muscle name="act1" tendon="tendon1" ctrllimited="true" ctrlrange="0 1" force="30" lengthrange="0.408637 0.925424"/>
-    <muscle name="act2" tendon="tendon2" ctrllimited="true" ctrlrange="0 1" force="30" lengthrange="0.408637 0.925424"/>
+    <muscle name="act1" tendon="tendon1" ctrllimited="true" ctrlrange="0 1" force="75" lengthrange="0.408637 0.925424"/>
+    <muscle name="act2" tendon="tendon2" ctrllimited="true" ctrlrange="0 1" force="75" lengthrange="0.408637 0.925424"/>
   </actuator>
 </mujoco>

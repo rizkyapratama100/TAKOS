@@ -4,3 +4,6 @@ log/
 .vscode/
 # Note: Do NOT ignore .devcontainer/ because your team needs it!
 mujoco/.venv/
+src/ppo_tentacle_tensorboard/
+src/logs/
+src/__pycache__/

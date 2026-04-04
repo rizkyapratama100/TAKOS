@@ -142,10 +142,29 @@ def main():
 
     # 2. Load the MuJoCo model
     import os
+    import sys
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    xml_path = os.path.join(script_dir, "tentacle_locked.xml")
+    
+    # Check for CLI argument, otherwise default to tentacle_locked.xml
+    if len(sys.argv) > 1:
+        xml_path = sys.argv[1]
+        if not os.path.isabs(xml_path):
+            xml_path = os.path.join(os.getcwd(), xml_path)
+    else:
+        xml_path = os.path.join(script_dir, "tentacle_locked.xml")
+
+    if not os.path.exists(xml_path):
+        ros_node.get_logger().error(f"XML file not found: {xml_path}")
+        return
+
+    ros_node.get_logger().info(f"Loading MuJoCo model from: {xml_path}")
     model = mujoco.MjModel.from_xml_path(xml_path)
     data = mujoco.MjData(model)
+
+    tip_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, "link24")
+    if tip_id == -1:
+        ros_node.get_logger().error("Tip body 'link24' not found in model.")
+        return
 
     # 3. Launch the viewer
     with mujoco.viewer.launch_passive(model, data) as viewer:
@@ -153,6 +172,7 @@ def main():
         print(f"Model has {model.nu} actuators.")
         print(f"  First 2 are Tendon Muscles (0 to 1)")
         print(f"  Next 23 are Joint Position Controllers (-1 to 1 maps to -30 to 30 deg)")
+        print("\nNote: Use the Control GUI (separate script) for manual sliders.")
         
         while viewer.is_running() and rclpy.ok():
             step_start = time.time()
@@ -179,27 +199,30 @@ def main():
             # --- C. Step the Physics ---
             mujoco.mj_step(model, data)
 
-            # --- D. Print and Publish Tendon Lengths ---
+            # --- E. Print and Publish Tendon Lengths + Tip Position ---
             if int(data.time * 10) % 1 == 0 and data.time % 0.1 < model.opt.timestep:
                 # Tendon lengths (from act1, act2)
                 l1 = float(data.actuator_length[0])
                 l2 = float(data.actuator_length[1])
+                tip_x = float(data.xpos[tip_id, 0])
+                tip_y = float(data.xpos[tip_id, 1])
+                tip_z = float(data.xpos[tip_id, 2])
                 
                 # Publish
                 len_msg = Float64MultiArray()
                 len_msg.data = [l1, l2]
                 ros_node.tendon_len_pub.publish(len_msg)
 
-                if len(ros_node.latest_cmds) >= 23:
-                    mode_str = "Joint"
-                else:
-                    mode_str = "Tendon"
-                print(f"Time: {data.time:.2f} | Mode: {mode_str} | L1={l1:.4f}, L2={l2:.4f}")
+                mode_str = "Joint" if len(ros_node.latest_cmds) >= 23 else "Tendon"
+                print(
+                    f"Time: {data.time:.2f} | Mode: {mode_str} | "
+                    f"Tip(x,y,z)=({tip_x:.4f}, {tip_y:.4f}, {tip_z:.4f}) | "
+                    f"L1={l1:.4f}, L2={l2:.4f}"
+                )
 
-            # --- E. Publish RViz Markers (at ~30 Hz) ---
             ros_node.publish_rviz_markers(model, data)
 
-            # --- F. Sync Visuals and Real-time Clock ---
+            # --- G. Sync Visuals and Real-time Clock ---
             viewer.sync()
             
             time_until_next_step = model.opt.timestep - (time.time() - step_start)

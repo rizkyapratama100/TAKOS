@@ -1,0 +1,51 @@
+<mujoco model="toy_arm">
+    <compiler angle="radian" meshdir="."/>
+    <option gravity="0 0 -9.81" timestep="0.001" solver="Newton"/>
+    <default>
+        <geom density="5000" friction="1 0.5 0.5"/>
+        <joint damping="1.0" armature="0.01"/>
+    </default>
+    <asset>
+        <texture name="texplane" type="2d" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 0.15 0.2" width="512" height="512" mark="cross" markrgb=".8 .8 .8"/>
+        <material name="matplane" reflectance="0.3" texture="texplane" texrepeat="1 1" texuniform="true"/>
+    </asset>
+    <worldbody>
+        <geom name="ground" type="plane" size="10 10 1" pos="0 0 0" quat="1 0 0 0" material="matplane" condim="3"/>
+        <light pos="1 0.5 0.7" dir="-1 -0.5 -1" directional="true" castshadow="false" diffuse="1 1 1" specular="0.3 0.3 0.3"/>
+
+        <!-- Motion capture target that is free floating for tracking. -->
+        <body name="target" mocap="true" pos="0 0 0">
+            <geom type="sphere" size="0.01" rgba="1 0 0 0.5" contype="0" conaffinity="0"/>
+        </body>
+
+        <body name="base_link" pos="0 0 0">
+            <geom name="base_geom" type="box" size="0.1 0.1 0.1" rgba="0.2 0.2 0.2 1"/>
+
+            <body name="link_1" pos="0 0 0.1">
+                <joint name="joint_1" type="hinge" axis="0 1 0" range="-3.14 3.14"/>
+                <geom name="link_1_geom" type="capsule" fromto="0 0 0 0 0 0.5" size="0.04" rgba="0 0.8 0 1"/>
+
+                <!-- Second Joint & Third Link -->
+                <body name="link_2" pos="0 0 0.5">
+                    <joint name="joint_2" type="hinge" axis="0 1 0" range="-3.14 3.14"/>
+                    <geom name="link_2_geom" type="capsule" fromto="0 0 0 0 0 0.25" size="0.03" rgba="0 0 1 1"/>
+
+                    <body name="link_3" pos="0 0 0.25">
+                        <joint name="joint_3" type="hinge" axis="0 1 0" range="-3.14 3.14"/>
+                        <geom name="link_3_geom" type="capsule" fromto="0 0 0 0 0 0.125" size="0.01" rgba="1 0 0.5 0.8"/>
+    
+                        <!-- Site/Node at the End-Effector for tracking relative to Mocap -->
+                        <site name="end_effector_site" pos="0 0 0.125" size="0.01"/>
+                    </body>
+                </body>
+            </body>
+        </body>
+    </worldbody>
+
+    <!-- Actuators for RL Model Control -->
+    <actuator>
+        <motor joint="joint_1" name="torque_j1" gear="100"/>
+        <motor joint="joint_2" name="torque_j2" gear="100"/>
+        <motor joint="joint_3" name="torque_j3" gear="100"/>
+    </actuator>
+</mujoco>

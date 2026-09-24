@@ -13,22 +13,22 @@ class ToyArmEnv(gym.Env):
 
         n_act = self.model.nu
         self.action_space = spaces.Box(-1, 1, (n_act,), dtype=np.float32)
-        obs_dim = 3*self.model.nq  # placeholder, tune to your obs
+        obs_dim = self.model.nq + self.model.nv + 3 + 3  # placeholder, tune to your obs
         self.observation_space = spaces.Box(-np.inf, np.inf, (obs_dim,), dtype=np.float32)
 
         self.render_mode = render_mode
         self.viewer = None
 
     def _sample_target(self):
-        # Arm moves in a single vertical plane (X-Z) since all joints
+        # Arm moves in a single vertical plane (X-Y) since all joints
         # rotate about the Y axis. Sample in polar coords within that plane.
         r_min, r_max = 0.15, 0.8  # inner/outer reachable radius, tune to your link lengths
         r = np.random.uniform(r_min, r_max)
         theta = np.random.uniform(-np.pi, np.pi)  # full circle in-plane; restrict if you only want a front arc, e.g. (-np.pi/2, np.pi/2)
 
         x = r * np.cos(theta)
-        z = 0.1 + r * np.sin(theta)  # offset by base height so targets don't clip through the ground
-        y = 0.0  # locked — no out-of-plane motion
+        y = 0.1 + r * np.sin(theta)  # offset by base height so targets don't clip through the ground
+        z = 0.0  # locked — no out-of-plane motion
 
         return np.array([x, y, z])
 
@@ -60,3 +60,18 @@ class ToyArmEnv(gym.Env):
         ee_pos = self.data.site_xpos[self.ee_site_id]
         target_pos = self.data.mocap_pos[self.mocap_id]
         return np.concatenate([self.data.qpos, self.data.qvel, ee_pos, target_pos - ee_pos]).astype(np.float32)
+
+    def render(self):
+        if self.render_mode == "human":
+            if self.view is None:
+                self.viewer = mujoco.viewer.launch_passive(self.model, self.data)
+            self.viewer.sync()
+        elif self.render_mode == "rgb_array":
+            if not hasattr(self, "_renderer"):
+                self._renderer = mujoco.Renderer(self.model, height=480, width=640)
+            self._renderer.update_scene(self.data)
+            return self._renderer.render()
+
+    def close(self):
+        if self.viewer is not None:
+            self.viewer.close()

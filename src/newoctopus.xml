@@ -38,11 +38,14 @@
     <mesh name="link_021" file="meshes/link_021.stl" />
   </asset>
   <worldbody>
-    <geom type="plane" size="2 2 0.05" rgba="1 1 1 1" />
+    <light name="light1" diffuse="1 1 1" active="true" pos="0 -0.5 0.01" dir="0 1 0" />
+    <light name="light2" diffuse="1 1 1" active="true" pos="-0.01 -0.5 0.5" dir="0 0 -1" />
+    <light name="light3" diffuse="1 1 1" active="true" pos="0 -0.1 1.5" dir="0 0 -1" />
+    <geom type="plane" size="2 2 0.05" rgba="0.9 0.9 0.9 1" />
     <body name="core" pos="0 0 0.3">
       <freejoint name="core_free" />
       <geom name="core_geom" type="box" size="0.05 0.05 0.05" rgba="0.2 0.3 0.8 1" />
-      <body name="arm_px_mount" pos="0.08 0 0" quat="0.7071068 0.0 -0.7071068 0.0">
+      <body name="arm_px_mount" pos="0.05 0 0" quat="0.7071068 0.0000000 0.7071068 0.0000000">
         <body name="px_link_001" pos="0 0 0" quat="0.0 0.0 -1.0 0.0">
           <joint name="px_j_001" type="ball" damping="50" stiffness="100" />
           <geom name="px_gmesh_001" type="mesh" mesh="link_001" group="1" />
@@ -255,7 +258,7 @@
           </body>
         </body>
       </body>
-      <body name="arm_nx_mount" pos="-0.08 0 0" quat="0.7071068 0.0000000 -0.7071068 0.0000000">
+      <body name="arm_nx_mount" pos="-0.05 0 0" quat="0.7071068 0.0000000 -0.7071068 0.0000000">
         <body name="nx_link_001" pos="0 0 0" quat="0.0 0.0 -1.0 0.0">
           <joint name="nx_j_001" type="ball" damping="50" stiffness="100" />
           <geom name="nx_gmesh_001" type="mesh" mesh="link_001" group="1" />
@@ -468,7 +471,7 @@
           </body>
         </body>
       </body>
-      <body name="arm_py_mount" pos="0 0.08 0" quat="0.7071068 -0.7071068 0.0000000 0.0000000">
+      <body name="arm_py_mount" pos="0 0.05 0" quat="0.7071068 -0.7071068 0.0000000 0.0000000">
         <body name="py_link_001" pos="0 0 0" quat="0.0 0.0 -1.0 0.0">
           <joint name="py_j_001" type="ball" damping="50" stiffness="100" />
           <geom name="py_gmesh_001" type="mesh" mesh="link_001" group="1" />
@@ -681,7 +684,7 @@
           </body>
         </body>
       </body>
-      <body name="arm_ny_mount" pos="0 -0.08 0" quat="0.7071068 0.7071068 0.0000000 0.0000000">
+      <body name="arm_ny_mount" pos="0 -0.05 0" quat="0.7071068 0.7071068 0.0000000 0.0000000">
         <body name="ny_link_001" pos="0 0 0" quat="0.0 0.0 -1.0 0.0">
           <joint name="ny_j_001" type="ball" damping="50" stiffness="100" />
           <geom name="ny_gmesh_001" type="mesh" mesh="link_001" group="1" />

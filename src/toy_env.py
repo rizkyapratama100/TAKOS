@@ -3,8 +3,6 @@ import mujoco
 import gymnasium as gym
 from gymnasium import spaces
 
-
-_DEFAULT_XML = os.path.join(os.path.dirname(os.path.abspath(__file__)), "toy_arm_crawl.xml")
 class ToyArmEnv(gym.Env):
     def __init__(self, xml_path, render_mode=None):
         self.model = mujoco.MjModel.from_xml_path(xml_path)
@@ -15,7 +13,7 @@ class ToyArmEnv(gym.Env):
 
         n_act = self.model.nu
         self.action_space = spaces.Box(-1, 1, (n_act,), dtype=np.float32)
-        obs_dim = self._get_obs().shape[0]  # placeholder, tune to your obs
+        obs_dim = 3*self.model.nq  # placeholder, tune to your obs
         self.observation_space = spaces.Box(-np.inf, np.inf, (obs_dim,), dtype=np.float32)
 
         self.render_mode = render_mode

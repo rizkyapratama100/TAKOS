@@ -3,7 +3,7 @@ import importlib.util
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from generate_tentacle_xml import transform_xml
+from old_arm_stuff.generate_tentacle_xml import transform_xml
 
 
 def load_generate_mujoco_xml(design_tool_dir: Path):

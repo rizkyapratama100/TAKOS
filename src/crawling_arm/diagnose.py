@@ -79,12 +79,20 @@ def main():
 
     # ---- 3. motion tests
     print("\n[3] motion tests (1.5 s)")
+    # joint position actuators (kp=10) would fight the muscles: switch them off for the muscle tests
+    saved_gain, saved_bias = m.actuator_gainprm[adj].copy(), m.actuator_biasprm[adj].copy()
+    m.actuator_gainprm[adj] = 0.0
+    m.actuator_biasprm[adj] = 0.0
     for k, name in enumerate(("muscle 1 (top)", "muscle 2 (bottom)")):
         ctrl = np.zeros(m.nu)
         ctrl[mu[k]] = 1.0
         settle(m, d, ctrl, 1.5)
         q = d.qpos[qadr]
-        print(f"    {name:18s} full: mean angle {q.mean():+.3f} rad, max|q| {np.abs(q).max():.3f}")
+        print(f"    {name:18s} full, muscle only: total bend {q.sum():+.3f} rad ({np.degrees(q.sum()):+.0f} deg), "
+              f"max|q| {np.abs(q).max():.3f}")
+    m.actuator_gainprm[adj] = saved_gain
+    m.actuator_biasprm[adj] = saved_bias
+
     ctrl = np.zeros(m.nu)
     ctrl[adj] = 0.3
     settle(m, d, ctrl, 1.5)

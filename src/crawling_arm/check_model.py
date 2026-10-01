@@ -37,16 +37,27 @@ def main():
     print(f"\n[rest, 1 s] base z={d.qpos[2]:.3f} m  contacts={d.ncon}  max|joint|={np.abs(d.qpos[qadr]).max():.3f} rad")
     print(f"            tendon lengths {d.ten_length}  allowed range {m.tendon_range.tolist()}")
 
+    # The joint position actuators (kp=10) hold every joint at its target and would fight the
+    # muscles, so switch them off for this muscle-only test and restore them afterwards.
+    adj = [mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_ACTUATOR, f"adj{i}") for i in range(1, 24)]
+    saved_gain, saved_bias = m.actuator_gainprm[adj].copy(), m.actuator_biasprm[adj].copy()
+    m.actuator_gainprm[adj] = 0.0
+    m.actuator_biasprm[adj] = 0.0
     for k, name in enumerate(("tendon1 (top)", "tendon2 (bottom)")):
         ctrl = np.zeros(m.nu)
         ctrl[mu[k]] = 1.0
         run(m, d, ctrl, 1.5)
         q = d.qpos[qadr]
-        print(f"[{name} full activation, 1.5 s] mean joint angle {q.mean():+.3f} rad, "
-              f"max|joint| {np.abs(q).max():.3f}, tip height {d.xpos[-1][2]:.3f} m")
-        if np.abs(q).mean() < 0.03:
-            print("   WARNING: barely moves. The arm is probably too heavy/stiff for 10 N muscles; "
-                  "raise muscle `force`, lower geom density, or lower joint stiffness.")
+        total = q.sum()
+        print(f"[{name} full activation, muscle only, 1.5 s] total bend {total:+.3f} rad "
+              f"({np.degrees(total):+.0f} deg), max|joint| {np.abs(q).max():.3f}, "
+              f"tip height {d.xpos[-1][2]:.3f} m")
+        print("   per-joint angles (rad):", np.round(q, 2).tolist())
+        if abs(total) < 1.0:
+            print("   NOTE: total bend under ~1 rad (57 deg). Crawling needs bigger curls: raise muscle "
+                  "`force`, lower density, or lower joint stiffness (see patch_model.py).")
+    m.actuator_gainprm[adj] = saved_gain
+    m.actuator_biasprm[adj] = saved_bias
 
     mujoco.mj_resetData(m, d)
     t0, n = time.time(), 2000

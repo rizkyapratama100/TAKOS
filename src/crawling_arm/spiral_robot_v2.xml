@@ -332,8 +332,8 @@
     </spatial>
   </tendon>
   <actuator>
-    <muscle name="act1" tendon="tendon1" ctrllimited="true" ctrlrange="0 1" force="30" lengthrange="0.408637 0.925424" />
-    <muscle name="act2" tendon="tendon2" ctrllimited="true" ctrlrange="0 1" force="30" lengthrange="0.408637 0.925424" />
+    <muscle name="act1" tendon="tendon1" ctrllimited="true" ctrlrange="0 1" force="15" lengthrange="0.408637 0.925424" />
+    <muscle name="act2" tendon="tendon2" ctrllimited="true" ctrlrange="0 1" force="15" lengthrange="0.408637 0.925424" />
     <position name="adj1" joint="j1" kp="10" ctrlrange="-0.523599 0.523599" forcerange="-1 1" />
     <position name="adj2" joint="j2" kp="10" ctrlrange="-0.523599 0.523599" forcerange="-1 1" />
     <position name="adj3" joint="j3" kp="10" ctrlrange="-0.523599 0.523599" forcerange="-1 1" />

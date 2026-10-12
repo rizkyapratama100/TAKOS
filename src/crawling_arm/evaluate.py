@@ -47,11 +47,14 @@ def main():
     frames, dists = [], []
     for ep in range(args.episodes):
         obs, _ = env.reset(seed=1000 + ep)
-        done, ret = False, 0.0
+        done, ret, lifts, jvels, bends = False, 0.0, [], [], []
         while not done:
             a, _ = model.predict(vn.normalize_obs(obs[None]), deterministic=not args.stochastic)
             obs, r, term, trunc, info = env.step(a[0])
             ret += r
+            lifts.append(info["lift"])
+            jvels.append(info["jvel"])
+            bends.append(info["bend"])
             done = term or trunc
             if args.video:
                 frames.append(env.render())
@@ -63,6 +66,9 @@ def main():
         dists.append(info["dist"])
         print(f"episode {ep}: return {ret:8.2f}  distance {info['dist']:+.3f} m  "
               f"mean speed {info['dist'] / (env.step_count * env.dt):+.3f} m/s  "
+              f"mean lift {np.mean(lifts) * 100:.1f} cm  "
+              f"joint speed {np.sqrt(np.mean(jvels)):.2f} rad/s  "
+              f"bend {np.mean(bends):.2f}  "
               f"{'(rolled over)' if term else ''}")
     print(f"mean distance: {np.mean(dists):+.3f} m over {args.episodes} episodes")
 

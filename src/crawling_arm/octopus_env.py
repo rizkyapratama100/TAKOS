@@ -30,8 +30,14 @@ class OctopusArmEnv(gym.Env):
         lateral=5.0,       # penalty per m/s of sideways COM speed
         roll=0.5,          # penalty for rolling the base link off the vertical bending plane
         yaw=0.5,           # penalty for the base heading drifting away from the crawl direction
-        action_rate=0.02,  # penalty on action changes (smoothness)
+        action_rate=0.5,   # penalty on action changes (smoothness)
         energy=0.02,       # penalty on muscle activation / joint effort
+        height=30.0,       # penalty per metre of mean link height above its resting height
+        tip_lift=10.0,     # extra penalty per metre the tip is lifted above its resting height
+        vert_vel=10.0,     # penalty on mean squared vertical speed of the links (m/s)^2
+        joint_vel=0.05,    # penalty on mean squared joint velocity (rad/s)^2   (fast motion)
+        joint_acc=0.02,    # penalty on mean squared change of joint velocity per control step (thrashing)
+        bend=0.5,          # penalty on mean squared joint angle, normalised to the joint limit (range of flailing)
         fall=5.0,          # one-off penalty when the episode is terminated for rolling over
     )
 
@@ -94,6 +100,9 @@ class OctopusArmEnv(gym.Env):
         self._ctrl = np.zeros(m.nu)
         self._prev_action = np.zeros(self.act_dim)
         self._com_vel = np.zeros(3)
+        self._rest_z = np.zeros(m.nbody - 1)   # link heights after settling (set in reset)
+        self._prev_z = np.zeros(m.nbody - 1)
+        self._prev_qvel = np.zeros(N_JOINTS)
         self.step_count = 0
         self._renderer = None
         self._cam = None
@@ -147,6 +156,9 @@ class OctopusArmEnv(gym.Env):
         self._prev_action[:] = 0.0
         self._com_vel[:] = 0.0
         self._com_start = d.subtree_com[self.root].copy()
+        self._rest_z = d.xpos[1:, 2].copy()
+        self._prev_z = self._rest_z.copy()
+        self._prev_qvel = np.zeros(N_JOINTS)
         self.step_count = 0
         return self._obs(), {}
 
@@ -173,6 +185,18 @@ class OctopusArmEnv(gym.Env):
         up = R[2, 1]                                              # 1 = bending plane still vertical
         yaw = -R[0, 2] * self.dir[1] + R[1, 2] * self.dir[0]       # base axis sideways component
 
+        # calmness terms: how high the links are lifted and how fast they move up/down and bend
+        z_now = d.xpos[1:, 2].copy()
+        vz = (z_now - self._prev_z) / self.dt
+        self._prev_z = z_now
+        lift = float(np.mean(np.maximum(z_now - self._rest_z, 0.0)))
+        jv = d.qvel[self.dadr].copy()
+        jvel = float(np.mean(jv ** 2))
+        jacc = float(np.mean((jv - self._prev_qvel) ** 2))
+        self._prev_qvel = jv
+        bend = float(np.mean((d.qpos[self.qadr] / JOINT_LIM) ** 2))
+        tip_lift = float(max(z_now[-1] - self._rest_z[-1], 0.0))
+
         w = self.w
         reward = (
             w["vel"] * np.clip(v_fwd, -0.5, 0.5)
@@ -181,6 +205,12 @@ class OctopusArmEnv(gym.Env):
             - w["yaw"] * abs(yaw)
             - w["action_rate"] * np.mean((a - self._prev_action) ** 2)
             - w["energy"] * (np.mean(d.act ** 2) + 0.1 * np.mean(np.abs(d.actuator_force[self.adj_ids])))
+            - w["height"] * lift
+            - w["vert_vel"] * float(np.mean(vz ** 2))
+            - w["joint_vel"] * jvel
+            - w["joint_acc"] * jacc
+            - w["bend"] * bend
+            - w["tip_lift"] * tip_lift
         )
         self._prev_action = a
 
@@ -193,6 +223,9 @@ class OctopusArmEnv(gym.Env):
             v_fwd=float(v_fwd),
             dist=float(np.dot(com1[:2] - self._com_start[:2], self.dir)),
             up=float(up),
+            lift=lift,
+            jvel=jvel,
+            bend=bend,
         )
         return self._obs(), float(reward), terminated, truncated, info
 

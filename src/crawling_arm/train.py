@@ -28,13 +28,15 @@ def main():
     p.add_argument("--n-envs", type=int, default=8)
     p.add_argument("--action-mode", choices=["reduced", "full"], default="reduced")
     p.add_argument("--n-modes", type=int, default=4)
-    p.add_argument("--smooth", type=float, default=0.5)
+    p.add_argument("--smooth", type=float, default=0.3)
     p.add_argument("--episode-seconds", type=float, default=8.0)
     p.add_argument("--frame-skip", type=int, default=20)
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--device", default="cpu")
     p.add_argument("--run-name", default="crawl")
     p.add_argument("--resume", default=None, help="path to a saved .zip to continue from")
+    p.add_argument("--weight", action="append", default=[], metavar="NAME=VALUE",
+                   help="override a reward weight, e.g. --weight height=40 (repeatable)")
     args = p.parse_args()
 
     run_dir = os.path.join("runs", args.run_name)
@@ -43,6 +45,8 @@ def main():
         xml_path=args.xml, frame_skip=args.frame_skip, episode_seconds=args.episode_seconds,
         action_mode=args.action_mode, n_modes=args.n_modes, smooth=args.smooth,
     )
+    if args.weight:
+        env_kwargs["weights"] = {k: float(v) for k, v in (s.split("=") for s in args.weight)}
     with open(os.path.join(run_dir, "config.json"), "w") as f:
         json.dump(dict(env=env_kwargs, args=vars(args)), f, indent=2)
 

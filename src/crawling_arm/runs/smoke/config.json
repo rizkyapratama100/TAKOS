@@ -5,7 +5,7 @@
     "episode_seconds": 8.0,
     "action_mode": "reduced",
     "n_modes": 4,
-    "smooth": 0.5
+    "smooth": 0.3
   },
   "args": {
     "xml": "spiral_robot_v2.xml",
@@ -13,12 +13,13 @@
     "n_envs": 8,
     "action_mode": "reduced",
     "n_modes": 4,
-    "smooth": 0.5,
+    "smooth": 0.3,
     "episode_seconds": 8.0,
     "frame_skip": 20,
     "seed": 0,
     "device": "cpu",
     "run_name": "smoke",
-    "resume": null
+    "resume": null,
+    "weight": []
   }
 }

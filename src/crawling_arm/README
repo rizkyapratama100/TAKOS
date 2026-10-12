@@ -1,0 +1,79 @@
+ECLAIR TAKOS
+
+python -m mujoco.viewer --mjcf=<file>
+
+Design 
+
+— make the xml 
+— How to make script that generates the xml
+	— need to make the xml first
+— train the xml 
+
+python3 -m venv rl_env
+
+Using a virtual environment
+source /Users/christophere/Documents/TAKOS/.venv/bin/activate
+
+Commands to know:
+
+python diagnose.py --xml spiral_robot.xml      — diagnoses different problems with the arm (how far each join may rotate, it’s density, etc)
+                           
+python check_model.py --xml spiral_robot.xml  — checking whether or not the arm is viable 
+
+
+Training command:
+python train.py --xml spiral_robot_v2.xml --timesteps 100000 --n-envs 8 --run-name smoke
+
+Viewing the model run:
+mjpython evaluate.py --run runs/smoke --viewer --episodes 5
+
+  python train.py --xml spiral_robot_v2.xml --timesteps 3000000 --n-envs 8 --run-name crawl_v1
+1. 
+
+Phase 0: Set up (about 1 hour)
+Goal: the provided files run on a desktop.
+1. Put spiral_robot.xml, baselink.stl and the six files from octopus_crawl/ in one folder.
+2. pip install -r requirements.txt
+3. python check_model.py --xml spiral_robot.xml
+Exit check: the XML loads, and each muscle at full activation visibly bends the arm. If it warns that the arm barely moves, fix mass, muscle force or stiffness first.
+Phase 1: Prove crawling is possible in sim (about 1 to 3 days)
+Goal: a policy that crawls at all, using the files as they are.
+1. Train: python train.py --xml spiral_robot.xml --timesteps 3000000 --n-envs 8 --run-name crawl_v1
+2. Watch it in TensorBoard (tensorboard --logdir runs), then record: python evaluate.py --run runs/crawl_v1 --video crawl.mp4
+3. If it fails, tune in this order: ground friction, muscle force, --timesteps, reward weights. Also check the video for exploits like flipping or launching.
+Exit check: consistent forward motion across 5 evaluation episodes, no rolling over, and a gait that looks plausible rather than jittery.
+This phase tells you whether the physical idea is feasible. If it can't crawl in sim with full access to the model, it won't on the real arm.
+Phase 2: Decide the real arm's design from what sim tells you (about 1 day)
+Goal: pick what the hardware needs.
+1. Retrain once with the joint actuators removed from the XML, so only the two tendons act. See if it still crawls.
+2. If it does, build the real arm with two tendon servos. If it doesn't, the real arm needs actuated joints or more tendons.
+3. Measure the real arm's mass, length, and servo travel and torque, and start matching the XML to it.
+Exit check: a sim model whose actuators match what you can build.
+Phase 3: Make the sim match the hardware (new code needed, about 3 to 5 days)
+Goal: a training setup the real arm can run.
+1. Replace the observation with deployable signals only: servo encoders, base IMU, tip IMU, commanded positions, and history stacking.
+2. Replace muscles with position-controlled tendon actuators.
+3. Add sensor noise, 1 to 3 steps of latency, and domain randomization of friction, mass, stiffness and damping.
+4. Add a heading command as an input, so the camera can steer later.
+These are the pieces I haven't written yet. Ask me for them when you reach this phase.
+Exit check: the policy still crawls in sim with randomization turned on and noisy sensors.
+Phase 4: Calibrate the sim against the real arm (about 3 to 5 days, can overlap with Phase 3)
+Goal: shrink the sim-to-real gap.
+1. Do bend and drop tests on the real arm to get stiffness and damping.
+2. Drag it across the surface to estimate friction.
+3. Use an overhead camera with AprilTags to measure real positions.
+4. Put these values into the XML and set the randomization ranges around them.
+5. Retrain.
+Exit check: a scripted sim motion and the same motion on the real arm look similar.
+Phase 5: Deploy (about 2 to 4 days)
+Goal: the policy runs on the arm.
+1. Export the actor network and the VecNormalize statistics to ONNX or numpy. I'll write this when you get here.
+2. Run a 50 Hz loop on the Jetson or the Pi: read sensors, normalize, run the network, clip, filter, send servo commands.
+3. Test in stages: arm suspended with a torque cap, then open-loop replay of a sim trajectory, then the policy on the ground.
+4. Keep an e-stop and hard limits on tendon travel through all of it.
+Exit check: crawling on the real arm, even slowly.
+Phase 6: Improve (optional)
+* Add the camera on the Jetson to produce heading commands, so the arm steers toward a target.
+* If the sim-to-real gap is small, try short, low-learning-rate fine-tuning on hardware, with action limits and an e-stop.
+What you can do right now
+Phase 0 and Phase 1 need nothing but the files you have. Start there, because everything later depends on whether the arm can crawl in sim. Send me the output of check_model.py and, once training finishes, the evaluation results or video notes, and I'll help you debug.

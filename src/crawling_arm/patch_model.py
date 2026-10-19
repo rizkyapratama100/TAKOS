@@ -27,6 +27,9 @@ def main():
     ap.add_argument("--damping-scale", type=float, default=0.5)
     ap.add_argument("--frictionloss-scale", type=float, default=0.3)
     ap.add_argument("--keep-self-collision", action="store_true")
+    ap.add_argument("--base-mass", type=float, default=None,
+                    help="mass of the base link in kg, e.g. 0.5 to include the servos/spools "
+                         "(default: keep the density-derived mass, about 0.12 kg at density 1100)")
     args = ap.parse_args()
 
     out = args.out or os.path.splitext(args.xml)[0] + "_v2.xml"
@@ -53,6 +56,11 @@ def main():
         for attr, s in scales.items():
             if j.get(attr) is not None:
                 j.set(attr, f"{float(j.get(attr)) * s:.6f}")
+
+    if args.base_mass is not None:
+        # an explicit geom mass overrides density; MuJoCo scales the mesh inertia to match
+        root.find("worldbody/body[@name='link1']/geom").set("mass", f"{args.base_mass:g}")
+        print(f"base link mass set to {args.base_mass:g} kg")
 
     n_muscles = 0
     for mu in root.iter("muscle"):

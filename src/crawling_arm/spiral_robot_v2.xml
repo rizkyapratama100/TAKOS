@@ -38,7 +38,7 @@
     <light pos="1 0.5 0.7" dir="-1 -0.5 -1" directional="true" castshadow="false" diffuse="1 1 1" specular="0.3 0.3 0.3" />
     <body name="link1" pos="0 0 0.05" quat="0.5 0.5 0.5 0.5">
       <freejoint />
-      <geom type="mesh" mesh="baselink_1" />
+      <geom type="mesh" mesh="baselink_1" mass="0.5" />
       <site name="s1_1" pos="0.000000000 0.036394210 0.016795002" size="0.001000 0.001000 0.001000" />
       <site name="s1_2" pos="0.000000000 0.034423562 0.042801474" size="0.001000 0.001000 0.001000" />
       <site name="s1_3" pos="0.000000000 -0.036394210 0.016795002" size="0.001000 0.001000 0.001000" />
@@ -332,8 +332,8 @@
     </spatial>
   </tendon>
   <actuator>
-    <muscle name="act1" tendon="tendon1" ctrllimited="true" ctrlrange="0 1" force="15" lengthrange="0.408637 0.925424" />
-    <muscle name="act2" tendon="tendon2" ctrllimited="true" ctrlrange="0 1" force="15" lengthrange="0.408637 0.925424" />
+    <muscle name="act1" tendon="tendon1" ctrllimited="true" ctrlrange="0 1" force="30" lengthrange="0.408637 0.925424" />
+    <muscle name="act2" tendon="tendon2" ctrllimited="true" ctrlrange="0 1" force="30" lengthrange="0.408637 0.925424" />
     <position name="adj1" joint="j1" kp="10" ctrlrange="-0.523599 0.523599" forcerange="-1 1" />
     <position name="adj2" joint="j2" kp="10" ctrlrange="-0.523599 0.523599" forcerange="-1 1" />
     <position name="adj3" joint="j3" kp="10" ctrlrange="-0.523599 0.523599" forcerange="-1 1" />

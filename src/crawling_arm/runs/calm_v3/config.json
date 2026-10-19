@@ -1,0 +1,44 @@
+{
+  "env": {
+    "xml_path": "spiral_robot_v2.xml",
+    "frame_skip": 20,
+    "episode_seconds": 8.0,
+    "action_mode": "reduced",
+    "n_modes": 4,
+    "smooth": 0.3,
+    "weights": {
+      "vel": 20.0,
+      "bend": 0.1,
+      "joint_acc": 0.005,
+      "joint_vel": 0.01,
+      "height": 10.0,
+      "tip_lift": 3.0,
+      "vert_vel": 3.0,
+      "action_rate": 0.1
+    }
+  },
+  "args": {
+    "xml": "spiral_robot_v2.xml",
+    "timesteps": 3000000,
+    "n_envs": 8,
+    "action_mode": "reduced",
+    "n_modes": 4,
+    "smooth": 0.3,
+    "episode_seconds": 8.0,
+    "frame_skip": 20,
+    "seed": 0,
+    "device": "cpu",
+    "run_name": "calm_v3",
+    "resume": null,
+    "weight": [
+      "vel=20",
+      "bend=0.1",
+      "joint_acc=0.005",
+      "joint_vel=0.01",
+      "height=10",
+      "tip_lift=3",
+      "vert_vel=3",
+      "action_rate=0.1"
+    ]
+  }
+}

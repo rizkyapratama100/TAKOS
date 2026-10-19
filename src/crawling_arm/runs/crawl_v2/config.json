@@ -9,7 +9,7 @@
   },
   "args": {
     "xml": "spiral_robot_v2.xml",
-    "timesteps": 3000000,
+    "timesteps": 100000,
     "n_envs": 8,
     "action_mode": "reduced",
     "n_modes": 4,

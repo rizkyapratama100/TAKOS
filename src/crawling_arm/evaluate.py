@@ -13,7 +13,7 @@ import numpy as np
 from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 
-from octopus_env import OctopusArmEnv
+from crawling_octopus.octopus_walk_env import OctopusArmEnv
 
 
 def main():

@@ -12,7 +12,7 @@ from stable_baselines3.common.callbacks import CheckpointCallback
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv, VecNormalize
 
-from octopus_env import OctopusArmEnv
+from crawling_octopus.octopus_walk_env import OctopusArmEnv
 
 
 def make_env(env_kwargs):

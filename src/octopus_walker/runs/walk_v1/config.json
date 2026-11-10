@@ -1,0 +1,36 @@
+{
+  "env": {
+    "xml_path": "octopus.xml",
+    "frame_skip": 20,
+    "episode_seconds": 20.0,
+    "smooth": 0.3,
+    "phase_period": 2.0,
+    "noise": 1.0,
+    "latency": 1,
+    "randomize": true,
+    "full_stroke": 0.08,
+    "servo_rpm": 40.0,
+    "spool_radius": 0.01
+  },
+  "args": {
+    "xml": "octopus.xml",
+    "timesteps": 10000000,
+    "n_envs": 8,
+    "episode_seconds": 20.0,
+    "frame_skip": 20,
+    "smooth": 0.3,
+    "phase_period": 2.0,
+    "servo_rpm": 40.0,
+    "spool_radius": 0.01,
+    "full_stroke": 0.08,
+    "noise": 1.0,
+    "latency": 1,
+    "no_randomize": false,
+    "weight": [],
+    "seed": 0,
+    "device": "cpu",
+    "run_name": "walk_v1",
+    "resume": null,
+    "resume_stats": null
+  }
+}
